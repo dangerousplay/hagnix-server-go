@@ -1,8 +1,27 @@
 package routes
 
-import "github.com/kataras/iris"
+import (
+	"encoding/xml"
+	"github.com/kataras/iris"
+)
 
-func HandleCrossDomain(ctx iris.Context){
+type AllowAcess struct {
+	XMLName xml.Name `xml:"allow-access-from"`
+	Domain  string   `xml:"domain,attr"`
+}
+
+type CrossDomain struct {
+	XMLName xml.Name `xml:"cross-domain-policy"`
+	Origin  AllowAcess
+}
+
+var cors = CrossDomain{
+	Origin: AllowAcess{
+		Domain: "*",
+	},
+}
+
+func HandleCrossDomain(ctx iris.Context) {
 	ctx.ContentType("text/*")
-	ctx.WriteString("<cross-domain-policy><allow-access-from domain=\"*\"/></cross-domain-policy>")
+	ctx.XML(cors)
 }
