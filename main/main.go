@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/database"
+	"hagnix-server-go1/database/models"
 	"hagnix-server-go1/routes"
 	"os"
 )
@@ -13,13 +13,8 @@ func main() {
 
 	database.Init()
 
-	database.GetDBEngine().Iterate(&database.Death{}, func(idx int, bean interface{}) error {
-		bean2, _ := bean.(database.Death)
-
-		test := bean2.Name
-		fmt.Printf(test)
-		return nil
-	})
+	database.GetDBEngine().Sync(&models.Accounts{})
+	database.GetDBEngine().Sync(&models.Death{})
 
 	routes.RegisterRoutes(app)
 

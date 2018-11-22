@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/kataras/iris"
+	"hagnix-server-go1/routes/account"
 	"os"
 	"path/filepath"
 )
@@ -13,7 +14,9 @@ func RegisterRoutes(app *iris.Application) {
 		panic(err)
 	}
 
-	app.Get("/crossdomain", HandleCrossDomain)
-	HandleSfx(app, dir)
-	HandleTexture(app, dir)
+	app.Get("/crossdomain", handleCrossDomain)
+	app.Get("/fame/list", handleFameList)
+	account.RegisterAccountRoutes(app)
+	handleSfx(app, dir)
+	handleTexture(app, dir)
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/database"
+	"hagnix-server-go1/database/models"
+	"hagnix-server-go1/routes/messages"
 )
 
 type FameListElement struct {
@@ -12,23 +14,24 @@ type FameListElement struct {
 	AccountId int      `xml:"accountId,attr"`
 	CharId    int      `xml:"charId,attr"`
 	Name      string   `xml:"name"`
-	CharType  string   `xml:"ObjectType"`
-	Text1     string   `xml:"Text1"`
-	Text2     string   `xml:"Text2"`
-	Skin      string   `xml:"Texture"`
+	CharType  int      `xml:"ObjectType"`
+	Text1     int      `xml:"Tex1"`
+	Text2     int      `xml:"Tex2"`
+	Skin      int      `xml:"Texture"`
 	Items     string   `xml:"Equipment"`
-	TotalFame string   `xml:"TotalFame"`
+	TotalFame int      `xml:"TotalFame"`
 }
 
 type FameList struct {
 	XMLName  xml.Name `xml:"FameList"`
 	Timespan string   `xml:"timespan,attr"`
-	list     []FameListElement
+	List     []FameListElement
 }
 
-func HandleFameList(ctx iris.Context) {
+func handleFameList(ctx iris.Context) {
 	timespan := ctx.URLParam("timespan")
 	accountId := ctx.URLParam("accountId")
+	charId := ctx.URLParam("charId")
 
 	var where string
 
@@ -44,15 +47,42 @@ func HandleFameList(ctx iris.Context) {
 		break
 	default:
 		ctx.StatusCode(400)
-		ctx.WriteString("<Error>Invalid fame list</Error>")
+		ctx.XML(messages.Error{RawXml: "Invalid fame list"})
 		return
 	}
 
-	query := database.GetDBEngine().Where(timespan)
+	query := database.GetDBEngine().Where(where)
 
-	if len(accountId) > 0 {
-		query = query.Or("(accId=? AND chrId=?)", ctx.URLParam("accountId"), ctx.URLParam("charId"))
+	if len(accountId) > 0 && len(charId) > 0 {
+		query = query.Or("(accId = ? AND chrId = ?)", accountId, charId)
 	}
 
-	fmt.Printf(where)
+	fameElements := []FameListElement{}
+
+	err := query.Desc("totalFame").Limit(20).Iterate(&models.Death{}, func(idx int, bean interface{}) error {
+		death, _ := bean.(*models.Death)
+		fameElements = append(fameElements, FameListElement{
+			AccountId: death.AccountId,
+			CharId:    death.CharacterId,
+			Name:      death.Name,
+			CharType:  death.CharType,
+			Text1:     death.Tex1,
+			Text2:     death.Tex2,
+			Skin:      death.Skin,
+			Items:     death.Items,
+			TotalFame: death.TotalFame,
+		})
+		return nil
+	})
+
+	if err != nil {
+		ctx.StatusCode(500)
+		ctx.WriteString("Internal server error")
+		fmt.Println(err)
+	}
+
+	ctx.XML(FameList{
+		List:     fameElements,
+		Timespan: timespan,
+	})
 }
