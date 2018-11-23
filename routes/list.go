@@ -2,12 +2,15 @@ package routes
 
 import (
 	"encoding/xml"
-	"fmt"
+	"github.com/InVisionApp/go-logger"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/database"
 	"hagnix-server-go1/database/models"
 	"hagnix-server-go1/routes/messages"
+	"hagnix-server-go1/routes/utils"
 )
+
+var logger = log.NewSimple()
 
 type FameListElement struct {
 	XMLName   xml.Name `xml:"FameListElem"`
@@ -75,14 +78,10 @@ func handleFameList(ctx iris.Context) {
 		return nil
 	})
 
-	if err != nil {
-		ctx.StatusCode(500)
-		ctx.WriteString("Internal server error")
-		fmt.Println(err)
+	if !utils.DefaultErrorHandler(ctx, err, logger) {
+		ctx.XML(FameList{
+			List:     fameElements,
+			Timespan: timespan,
+		})
 	}
-
-	ctx.XML(FameList{
-		List:     fameElements,
-		Timespan: timespan,
-	})
 }

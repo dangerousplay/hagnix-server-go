@@ -2,12 +2,15 @@ package database
 
 import (
 	"fmt"
+	"github.com/InVisionApp/go-logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	"hagnix-server-go1/database/models"
 	"os"
 )
 
 var dbEngine *xorm.Engine
+var logger = log.NewSimple()
 
 func Init() error {
 	var err error
@@ -32,9 +35,19 @@ func Init() error {
 		dbPassword = "root"
 	}
 
+	logger.Info("[SQL] Connecting to database...")
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbUser, dbPassword, dbHost, 3306, dbDatabase)
 
 	dbEngine, err = xorm.NewEngine("mysql", dsn)
+
+	logger.Info("[SQL] Database connected.")
+
+	logger.Info("[SQL] Registering database entities...")
+
+	dbEngine.SetLogger(dBLogger{})
+
+	registerEntities()
 
 	return err
 }
@@ -48,4 +61,9 @@ func GetDBEngine() *xorm.Engine {
 	}
 
 	return dbEngine
+}
+
+func registerEntities() {
+	dbEngine.Sync(&models.Accounts{})
+	dbEngine.Sync(&models.Death{})
 }

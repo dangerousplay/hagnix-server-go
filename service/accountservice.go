@@ -22,6 +22,12 @@ func (service *AccountService) Verify(uuid string, password string) (*models.Acc
 	}
 }
 
+func (service *AccountService) VerifyOnly(uuid string, password string) (bool, error) {
+	var account models.Accounts
+
+	return database.GetDBEngine().Where("uuid = ? AND password = SHA1(?)", uuid, password).Exist(&account)
+}
+
 func GetAccountService() *AccountService {
 	return &instance
 }

@@ -22,6 +22,5 @@ var cors = CrossDomain{
 }
 
 func handleCrossDomain(ctx iris.Context) {
-	ctx.ContentType("text/*")
 	ctx.XML(cors)
 }

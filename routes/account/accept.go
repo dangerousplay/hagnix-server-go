@@ -1,12 +1,16 @@
 package account
 
 import (
-	"fmt"
+	"github.com/InVisionApp/go-logger"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/database"
+	"hagnix-server-go1/database/models"
 	"hagnix-server-go1/routes/messages"
+	"hagnix-server-go1/routes/utils"
 	"hagnix-server-go1/service"
 )
+
+var logger = log.NewSimple()
 
 func handleAccepTOS(ctx iris.Context) {
 	guid := ctx.URLParam("guid")
@@ -17,31 +21,20 @@ func handleAccepTOS(ctx iris.Context) {
 		return
 	}
 
-	account, err := service.GetAccountService().Verify(guid, password)
+	account, err := service.GetAccountService().VerifyOnly(guid, password)
 
-	if err != nil {
-		ctx.StatusCode(500)
-		ctx.XML(messages.Error{RawXml: "Something failed: " + err.Error()})
-		fmt.Println(err)
+	if utils.DefaultErrorHandler(ctx, err, logger) {
 		return
 	}
 
-	if account == nil {
+	if !account {
 		ctx.XML(messages.Error{RawXml: "Account not found"})
 		return
 	}
 
-	if account.Acceptednewtos == 0 {
-		ctx.XML(messages.Error{RawXml: "TOS already accepted!"})
-		return
-	} else {
-		account.Acceptednewtos = 1
-		_, err := database.GetDBEngine().Cols("acceptedNewTos").Where("uuid = ?", account.Uuid).Update(&account)
+	_, err = database.GetDBEngine().Cols("acceptedNewTos").Where("uuid = ?", guid).Update(&models.Accounts{Acceptednewtos: 1})
 
-		if err != nil {
-			fmt.Println(err)
-		}
-
+	if !utils.DefaultErrorHandler(ctx, err, logger) {
 		ctx.XML(messages.Sucess{Message: "OK"})
 	}
 

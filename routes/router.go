@@ -16,6 +16,7 @@ func RegisterRoutes(app *iris.Application) {
 
 	app.Get("/crossdomain", handleCrossDomain)
 	app.Get("/fame/list", handleFameList)
+	app.Get("/health", handleHealth)
 	account.RegisterAccountRoutes(app)
 	handleSfx(app, dir)
 	handleTexture(app, dir)
