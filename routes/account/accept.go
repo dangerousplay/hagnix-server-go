@@ -17,7 +17,7 @@ func handleAccepTOS(ctx iris.Context) {
 	password := ctx.URLParam("password")
 
 	if len(guid) < 1 && len(password) < 1 {
-		ctx.XML(messages.Error{RawXml: "Bad request"})
+		ctx.XML(messages.BadRequest)
 		return
 	}
 
@@ -35,7 +35,7 @@ func handleAccepTOS(ctx iris.Context) {
 	_, err = database.GetDBEngine().Cols("acceptedNewTos").Where("uuid = ?", guid).Update(&models.Accounts{Acceptednewtos: 1})
 
 	if !utils.DefaultErrorHandler(ctx, err, logger) {
-		ctx.XML(messages.Sucess{Message: "OK"})
+		ctx.XML(messages.DefaultSuccess)
 	}
 
 }

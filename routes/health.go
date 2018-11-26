@@ -25,7 +25,7 @@ func handleHealth(ctx iris.Context) {
 }
 
 func checkConfig(health *HealthState) {
-	if !config.Config.Loaded {
+	if !config.GetConfig().Loaded {
 		health.ErrorsMessages = append(health.ErrorsMessages, "Config not loaded!")
 	}
 }

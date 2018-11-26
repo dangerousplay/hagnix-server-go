@@ -66,4 +66,8 @@ func GetDBEngine() *xorm.Engine {
 func registerEntities() {
 	dbEngine.Sync(&models.Accounts{})
 	dbEngine.Sync(&models.Death{})
+	dbEngine.Sync(&models.Giftcodes{})
+	dbEngine.Sync(&models.Stats{})
+	dbEngine.Sync(&models.Packages{})
+	dbEngine.Sync(&models.Classstats{})
 }

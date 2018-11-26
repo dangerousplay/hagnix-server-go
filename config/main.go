@@ -9,7 +9,7 @@ import (
 )
 
 var logger = log.NewSimple()
-var Config = &ROTMGConfig{}
+var config = &ROTMGConfig{}
 
 type Servers struct {
 	Name     string
@@ -78,7 +78,7 @@ func Init() {
 	logger.Info("Loading server configuration...")
 
 	if len(variable) > 0 {
-		err := Config.LoadFromContent(variable)
+		err := config.LoadFromContent(variable)
 
 		if err != nil {
 			panic(err)
@@ -90,12 +90,20 @@ func Init() {
 			panic(err)
 		}
 
-		err = Config.LoadFromFile(dir + "/server.json")
+		err = config.LoadFromFile(dir + "/server.json")
 
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	Config.Loaded = true
+	config.Loaded = true
+}
+
+func GetConfig() *ROTMGConfig {
+	if config == nil || !config.Loaded {
+		Init()
+	}
+
+	return config
 }
