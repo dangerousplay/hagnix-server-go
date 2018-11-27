@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/kataras/iris"
 	"hagnix-server-go1/routes/account"
+	"hagnix-server-go1/routes/appn"
 	"os"
 	"path/filepath"
 )
@@ -18,6 +19,7 @@ func RegisterRoutes(app *iris.Application) {
 	app.Get("/fame/list", handleFameList)
 	app.Get("/health", handleHealth)
 	account.RegisterAccountRoutes(app)
+	appn.RegisterRouters(app)
 	handleSfx(app, dir)
 	handleTexture(app, dir)
 }

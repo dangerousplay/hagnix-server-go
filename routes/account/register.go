@@ -16,6 +16,7 @@ func RegisterAccountRoutes(app *iris.Application) {
 	raccount.Get("/resetPassword", handleResetPassword)
 	raccount.Get("/setName", handleSetName)
 	raccount.Get("/validateEmail", handleValidateEmail)
+	raccount.Get("/verify", handleVerify)
 
 }
 

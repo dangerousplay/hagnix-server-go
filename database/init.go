@@ -47,7 +47,7 @@ func Init() error {
 
 	dbEngine.SetLogger(dBLogger{})
 
-	registerEntities()
+	//registerEntities()
 
 	return err
 }
@@ -70,4 +70,6 @@ func registerEntities() {
 	dbEngine.Sync(&models.Stats{})
 	dbEngine.Sync(&models.Packages{})
 	dbEngine.Sync(&models.Classstats{})
+	dbEngine.Sync(&models.Guilds{})
+	dbEngine.Sync(&models.Vaults{})
 }

@@ -1,76 +1,14 @@
 package config
 
 import (
-	"encoding/json"
 	"github.com/InVisionApp/go-logger"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 var logger = log.NewSimple()
 var config = &ROTMGConfig{}
-
-type Servers struct {
-	Name     string
-	Address  string
-	Location string
-}
-
-type ServerConfig struct {
-	VerifyEmail  bool   `json:"VerifyEmail"`
-	ServerDomain string `json:"ServerDomain"`
-	Servers      []Servers
-}
-
-type ROTMGConfig struct {
-	ServerConfig *ServerConfig
-	Loaded       bool
-}
-
-func (cfg *ROTMGConfig) LoadFromVariable(variable string) error {
-	values := os.Getenv(variable)
-
-	config := &ServerConfig{}
-
-	err := json.Unmarshal([]byte(values), config)
-
-	cfg.ServerConfig = config
-
-	return err
-}
-
-func (cfg *ROTMGConfig) LoadFromContent(content string) error {
-	config := &ServerConfig{}
-
-	err := json.Unmarshal([]byte(content), config)
-
-	cfg.ServerConfig = config
-
-	return err
-}
-
-func (cfg *ROTMGConfig) LoadFromFile(path string) error {
-	file, err := os.Open(path)
-
-	if err != nil {
-		return err
-	}
-
-	bytes, err := ioutil.ReadAll(file)
-
-	if err != nil {
-		return err
-	}
-
-	config := &ServerConfig{}
-
-	err = json.Unmarshal(bytes, config)
-
-	cfg.ServerConfig = config
-
-	return err
-}
+var filesConfig = &FilesConfig{}
 
 func Init() {
 	variable := os.Getenv("SETTINGS_VARIABLE")
@@ -97,13 +35,7 @@ func Init() {
 		}
 	}
 
+	initWatcher()
+
 	config.Loaded = true
-}
-
-func GetConfig() *ROTMGConfig {
-	if config == nil || !config.Loaded {
-		Init()
-	}
-
-	return config
 }
