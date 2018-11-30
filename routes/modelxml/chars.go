@@ -2,7 +2,7 @@ package modelxml
 
 import "encoding/xml"
 
-var classes = []ClassAvailabilityXML{
+var Classes = []ClassAvailabilityXML{
 	{Class: "Rogue", Restricted: "restricted"},
 	{Class: "Assassin", Restricted: "restricted"},
 	{Class: "Huntress", Restricted: "restricted"},
@@ -26,15 +26,16 @@ type AbilityItemXML struct {
 	Points  int      `xml:"points,attr"`
 }
 
+type AbilityWrapper struct{ Abilities []AbilityItemXML }
+
 type PetItemXML struct {
-	XMLName         xml.Name `xml:"PetItem"`
-	SkinName        string   `xml:"name,attr"`
-	Type            int      `xml:"type,attr"`
-	InstanceId      int      `xml:"instanceId,attr"`
-	MaxAbilityPower int      `xml:"maxAbilityPower,attr"`
-	Skin            int      `xml:"skin,attr"`
-	Rarity          int      `xml:"rarity,attr"`
-	Abilities       []AbilityItemXML
+	SkinName        string         `xml:"name,attr"`
+	Type            int            `xml:"type,attr"`
+	InstanceId      int            `xml:"instanceId,attr"`
+	MaxAbilityPower int            `xml:"maxAbilityPower,attr"`
+	Skin            int            `xml:"skin,attr"`
+	Rarity          int            `xml:"rarity,attr"`
+	Abilities       AbilityWrapper `xml:"Abilities"`
 }
 
 type ItemXML struct {
@@ -67,36 +68,37 @@ type ServerItemXML struct {
 }
 
 type CharXML struct {
-	XMLName          xml.Name `xml:"Char"`
-	Id               int      `xml:"id,attr"`
-	ObjectType       int      `xml:"ObjectType"`
-	Level            int      `xml:"Level"`
-	Exp              int      `xml:"Exp"`
-	CurrentFame      int      `xml:"CurrentFame"`
-	HealthStackCount int      `xml:"HealthStackCount"`
-	MagicStackCount  int      `xml:"MagicStackCount"`
-	Equipment        string   `xml:"Equipment"`
-	HasBackpack      int      `xml:"HasBackpack"`
-	MaxHitPoints     int      `xml:"MaxHitPoints"`
-	HitPoints        int      `xml:"HitPoints"`
-	MaxMagicPoints   int      `xml:"MaxMagicPoints"`
-	MagicPoints      int      `xml:"MagicPoints"`
-	Attack           int      `xml:"Attack"`
-	Defense          int      `xml:"Defense"`
-	Speed            int      `xml:"Speed"`
-	Dexterity        int      `xml:"Dexterity"`
-	HpRegen          int      `xml:"HpRegen"`
-	MpRegen          int      `xml:"MpRegen"`
-	Tex1             int      `xml:"Tex1"`
-	Tex2             int      `xml:"Tex2"`
-	XpBoosted        bool     `xml:"XpBoosted"`
-	XpTimer          int      `xml:"XpTimer"`
-	LDTimer          int      `xml:"LDTimer"`
-	LTTimer          int      `xml:"LTTimer"`
-	PCStats          string   `xml:"PCStats"`
-	CasToken         string   `xml:"casToken"`
-	Skin             int      `xml:"Texture"`
-	Dead             bool     `xml:"Dead"`
+	XMLName          xml.Name   `xml:"Char"`
+	Id               int        `xml:"id,attr"`
+	ObjectType       int        `xml:"ObjectType"`
+	Level            int        `xml:"Level"`
+	Exp              int        `xml:"Exp"`
+	CurrentFame      int        `xml:"CurrentFame"`
+	HealthStackCount int        `xml:"HealthStackCount"`
+	MagicStackCount  int        `xml:"MagicStackCount"`
+	Equipment        string     `xml:"Equipment"`
+	HasBackpack      int        `xml:"HasBackpack"`
+	MaxHitPoints     int        `xml:"MaxHitPoints"`
+	HitPoints        int        `xml:"HitPoints"`
+	MaxMagicPoints   int        `xml:"MaxMagicPoints"`
+	MagicPoints      int        `xml:"MagicPoints"`
+	Attack           int        `xml:"Attack"`
+	Defense          int        `xml:"Defense"`
+	Speed            int        `xml:"Speed"`
+	Dexterity        int        `xml:"Dexterity"`
+	HpRegen          int        `xml:"HpRegen"`
+	MpRegen          int        `xml:"MpRegen"`
+	Tex1             int        `xml:"Tex1"`
+	Tex2             int        `xml:"Tex2"`
+	XpBoosted        bool       `xml:"XpBoosted"`
+	XpTimer          int        `xml:"XpTimer"`
+	LDTimer          int        `xml:"LDTimer"`
+	LTTimer          int        `xml:"LTTimer"`
+	PCStats          string     `xml:"PCStats"`
+	CasToken         string     `xml:"casToken"`
+	Skin             int        `xml:"Texture"`
+	Dead             bool       `xml:"Dead"`
+	Pet              PetItemXML `xml:"Pet"`
 }
 
 type ClassAvailabilityXML struct {
@@ -109,20 +111,32 @@ type ItemCostXML struct {
 	Type        string `xml:"type,attr"`
 	Purchasable int    `xml:"purchasable,attr"`
 	Expires     int    `xml:"expires,attr"`
-	Price       int    `xml:",innerxml"`
+	Price       string `xml:",innerxml"`
 }
 
+type ClassWrapper struct {
+	Classes []ClassAvailabilityXML
+}
+
+type ItemsWrapper struct{ ItemCost []ItemCostXML }
+
+type MaxClassWrapper struct{ MaxClasses []MaxClassLevelItem }
+
+type ServersWrapper struct{ Servers []ServerItemXML }
+
 type CharsXML struct {
-	XMLName     xml.Name               `xml:"Chars"`
-	Char        []CharsXML             `xml:"Char"`
-	NextCharId  int                    `xml:"nextCharId"`
-	MaxNumChars int                    `xml:"maxNumChars"`
-	Account     AccountXML             `xml:"Account"`
-	NewsXML     []NewsItemXML          `xml:"News"`
-	Servers     []ServerItemXML        `xml:"Server"`
-	OwnedSkins  string                 `xml:"OwnedSkins"`
-	TOSPopup    int                    `xml:"TOSPopup"`
-	Lat         string                 `xml:"Lat"`
-	Long        string                 `xml:"Long"`
-	Classes     []ClassAvailabilityXML `xml:"ClassAvailabilityList"`
+	XMLName           xml.Name        `xml:"Chars"`
+	Char              []CharXML       `xml:"Char"`
+	NextCharId        int             `xml:"nextCharId,attr"`
+	MaxNumChars       int             `xml:"maxNumChars,attr"`
+	Account           AccountXML      `xml:"Account"`
+	NewsXML           []NewsItemXML   `xml:"News"`
+	Servers           ServersWrapper  `xml:"Servers"`
+	OwnedSkins        string          `xml:"OwnedSkins"`
+	TOSPopup          int             `xml:"TOSPopup"`
+	Lat               string          `xml:"Lat"`
+	Long              string          `xml:"Long"`
+	Classes           ClassWrapper    `xml:"ClassAvailabilityList"`
+	ItemCosts         ItemsWrapper    `xml:"ItemCosts"`
+	MaxClassLevelList MaxClassWrapper `xml:"MaxClassLevelList"`
 }

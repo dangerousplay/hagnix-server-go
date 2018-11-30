@@ -6,6 +6,7 @@ import (
 	"hagnix-server-go1/config"
 	"hagnix-server-go1/database"
 	"hagnix-server-go1/routes"
+	"hagnix-server-go1/service"
 	"os"
 )
 
@@ -19,6 +20,7 @@ func main() {
 
 	config.Init()
 	database.Init()
+	service.Init()
 
 	routes.RegisterRoutes(app)
 
@@ -29,7 +31,7 @@ func port() string {
 	port := os.Getenv("PORT")
 
 	if len(port) < 1 {
-		port = "8080"
+		port = "80"
 	}
 
 	return port

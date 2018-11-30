@@ -1,7 +1,8 @@
 package service
 
 import (
-	"github.com/InVisionApp/go-logger"
+	"github.com/deckarep/golang-set"
+	"github.com/kataras/iris/core/errors"
 	"hagnix-server-go1/config"
 	"hagnix-server-go1/routes/modelxml"
 	"net"
@@ -9,33 +10,26 @@ import (
 	"strings"
 )
 
-var logger = log.NewSimple()
 var server = &ServerService{}
+var servers = mapset.NewThreadUnsafeSet()
 
 type ServerService struct{}
 
 func (server *ServerService) GetServers() []modelxml.ServerItemXML {
-	servers := config.GetConfig().ServerConfig.Servers
+	var xml []modelxml.ServerItemXML
 
-	var serverXML []modelxml.ServerItemXML
+	for v := range servers.Iter() {
+		t, ok := v.(modelxml.ServerItemXML)
 
-	for _, v := range servers {
-		usage, err := getUsage(v.Address)
-
-		if err != nil {
-			logger.Warnf("Can't get usage of server: %f", usage)
+		if !ok {
+			logger.Warnf("Invalid cast to ServerItemXML: %s", v)
 			continue
 		}
 
-		serverXML = append(serverXML, modelxml.ServerItemXML{
-			Name:      v.Name,
-			AdminOnly: "false",
-			Usage:     usage,
-			DNS:       v.Address,
-		})
+		xml = append(xml, t)
 	}
 
-	return serverXML
+	return xml
 }
 
 func getUsage(address string) (float64, error) {
@@ -43,16 +37,17 @@ func getUsage(address string) (float64, error) {
 
 	var port = ":2050"
 
-	if len(hostPort) > 0 {
+	if len(hostPort) > 1 {
 		port = ""
 	}
 
 	conn, err := net.Dial("tcp", address+port)
-	defer conn.Close()
 
 	if err != nil {
 		return 0, err
 	}
+
+	defer conn.Close()
 
 	_, err = conn.Write([]byte{0x4d, 0x61, 0x64, 0x65, 0xff})
 
@@ -60,10 +55,21 @@ func getUsage(address string) (float64, error) {
 		return 0, err
 	}
 
-	var buffer []byte
-	conn.Read(buffer)
+	buf := make([]byte, 256)
 
-	str := strings.Split(string(buffer), ":")
+	readed, err := conn.Read(buf)
+
+	if err != nil {
+		return 0, err
+	}
+
+	decoded := strings.TrimSpace(string(buf[:readed]))
+
+	str := strings.Split(decoded, ":")
+
+	if len(str) < 2 {
+		return 0, errors.New("invalid response from server: " + string(buf))
+	}
 
 	number1, err := strconv.ParseFloat(str[1], 32)
 
@@ -78,6 +84,30 @@ func getUsage(address string) (float64, error) {
 	}
 
 	return number1 / number2, err
+}
+
+func updateServers() {
+	serversList := config.GetConfig().ServerConfig.Servers
+
+	servers.Clear()
+
+	for _, v := range serversList {
+		usage, err := getUsage(v.Address)
+
+		if err != nil {
+			logger.Warnf("Can't get usage of server: %s", v.Name)
+			logger.Warn(err)
+			continue
+		}
+
+		servers.Add(modelxml.ServerItemXML{
+			Name:      v.Name,
+			AdminOnly: "false",
+			Usage:     usage,
+			DNS:       v.Address,
+		})
+	}
+
 }
 
 func GetServerService() *ServerService {

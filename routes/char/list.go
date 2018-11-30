@@ -1,4 +1,4 @@
-package chars
+package char
 
 import (
 	"github.com/kataras/iris"
@@ -41,26 +41,31 @@ func handleList(ctx iris.Context) {
 				PetYardType: 1,
 			},
 			NewsXML: news,
-			Servers: servers,
+			Servers: modelxml.ServersWrapper{Servers: servers},
 		}
 
 		ctx.XML(chars)
 		return
 	} else {
 		charId, err := service.GetAccountService().NextCharId(account)
+		characters, err2 := service.GetAccountService().GetCharsXML(account)
 
-		if utils.DefaultErrorHandler(ctx, err, logger) {
+		if utils.DefaultErrorHandler(ctx, err, logger) || utils.DefaultErrorHandler(ctx, err2, logger) {
 			return
 		}
 
 		chars := &modelxml.CharsXML{
-			Account:     *accountXML,
-			NextCharId:  charId,
-			MaxNumChars: account.Maxcharslot,
-			OwnedSkins:  account.Ownedskins,
-			NewsXML:     news,
-			Servers:     servers,
-			TOSPopup:    account.Acceptednewtos,
+			Account:           *accountXML,
+			NextCharId:        charId,
+			MaxNumChars:       account.Maxcharslot,
+			OwnedSkins:        account.Ownedskins,
+			NewsXML:           news,
+			Servers:           modelxml.ServersWrapper{Servers: servers},
+			TOSPopup:          account.Acceptednewtos,
+			Char:              characters,
+			Classes:           modelxml.ClassWrapper{Classes: modelxml.Classes},
+			MaxClassLevelList: modelxml.MaxClassWrapper{MaxClasses: modelxml.MaxClassLevels},
+			ItemCosts:         modelxml.ItemsWrapper{ItemCost: modelxml.Items},
 		}
 
 		ctx.XML(chars)

@@ -1,4 +1,4 @@
-package chars
+package char
 
 import (
 	"github.com/InVisionApp/go-logger"

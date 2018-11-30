@@ -8,6 +8,7 @@ import (
 	"hagnix-server-go1/routes/modelxml"
 	"hagnix-server-go1/routes/utils"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -152,7 +153,7 @@ func (service *AccountService) Unlock(uuid string) (int64, error) {
 }
 
 func (service *AccountService) NextCharId(account *models.Accounts) (int, error) {
-	maps, err := database.GetDBEngine().Where("accId = ?", account).Select("IFNULL(MAX(charId), 0) + 1").Query()
+	maps, err := database.GetDBEngine().SQL("SELECT IFNULL(MAX(charId), 0) + 1 FROM characters WHERE accId = ?", account.Id).Query()
 
 	if err != nil {
 		return 0, err
@@ -253,6 +254,8 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 		return nil, nil, err
 	}
 
+	classesXML := modelxml.ToClassStatsXML(classes)
+
 	xmlt := modelxml.AccountXML{
 		Id:                      account.Id,
 		Name:                    account.Name,
@@ -267,9 +270,10 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 		ArenaTickets:            0,
 
 		Stats: modelxml.StatsXML{
-			ClassStats: modelxml.ToClassStatsXML(classes),
-			TotalFame:  stats.Totalfame,
-			Fame:       stats.Fame,
+			ClassStats:   classesXML,
+			TotalFame:    stats.Totalfame,
+			Fame:         stats.Fame,
+			BestCharFame: getMaxCharFame(classes),
 		},
 
 		DailyQuest: modelxml.DailyQuestXML{
@@ -298,6 +302,110 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 func (service *AccountService) GenerateAccountXML(uuid string, password string) (*modelxml.AccountXML, error) {
 	account, _, err := service.VerifyGenerateAccountXML(uuid, password)
 	return account, err
+}
+
+func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml.CharXML, error) {
+	var chars []models.Characters
+	err := database.GetDBEngine().Where("accId = ? AND dead = FALSE", account.Id).Find(&chars)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var charsXML []modelxml.CharXML
+
+	for _, v := range chars {
+		stats, err := utils.FromCommaSpaceSeparated(v.Stats)
+
+		if err != nil {
+			logger.Warn("Can't load char: " + err.Error())
+			continue
+		}
+
+		var pet models.Pets
+
+		success, err := database.GetDBEngine().Where("accId = ? AND petId = ?", account.Id, v.Petid).Get(&pet)
+
+		if err != nil {
+			logger.Warn("Can't load pet: " + err.Error())
+			continue
+		}
+
+		charXML := modelxml.CharXML{
+			Id:         v.Charid,
+			ObjectType: v.Chartype,
+			//CharacterId: rdr.GetInt32("charId"),
+			Level:            v.Level,
+			Exp:              v.Exp,
+			CurrentFame:      v.Fame,
+			Equipment:        v.Items,
+			MaxHitPoints:     stats[0],
+			HitPoints:        v.Hp,
+			MaxMagicPoints:   stats[1],
+			MagicPoints:      v.Mp,
+			Attack:           stats[2],
+			Defense:          stats[3],
+			Speed:            stats[4],
+			Dexterity:        stats[7],
+			HpRegen:          stats[5],
+			MpRegen:          stats[6],
+			HealthStackCount: v.Hppotions,
+			MagicStackCount:  v.Mppotions,
+			HasBackpack:      v.Hasbackpack,
+			Tex1:             v.Tex1,
+			Tex2:             v.Tex2,
+			Dead:             false,
+			PCStats:          v.Famestats,
+			Skin:             v.Skin,
+		}
+
+		if success {
+			charXML.Pet = modelxml.PetItemXML{
+				SkinName:        pet.Skinname,
+				Type:            pet.Objtype,
+				InstanceId:      pet.Petid,
+				Skin:            pet.Skin,
+				Rarity:          pet.Rarity,
+				MaxAbilityPower: pet.Maxlevel,
+				Abilities:       modelxml.AbilityWrapper{Abilities: toAbilitiesXML(pet)},
+			}
+		}
+
+		charsXML = append(charsXML, charXML)
+	}
+
+	return charsXML, err
+}
+
+func toAbilitiesXML(abilities models.Pets) []modelxml.AbilityItemXML {
+	lenght := len(strings.Split(abilities.Levels, ","))
+
+	var abilityXML []modelxml.AbilityItemXML
+
+	xps, _ := utils.FromCommaSpaceSeparated(abilities.Xp)
+	levels, _ := utils.FromCommaSpaceSeparated(abilities.Levels)
+	abily, _ := utils.FromCommaSpaceSeparated(abilities.Abilities)
+
+	for i := 0; i < lenght; i++ {
+		abilityXML = append(abilityXML, modelxml.AbilityItemXML{
+			Points: xps[i],
+			Power:  levels[i],
+			Type:   abily[i],
+		})
+	}
+
+	return abilityXML
+}
+
+func getMaxCharFame(classes []models.Classstats) int {
+	var best int
+
+	for _, v := range classes {
+		if v.Bestfame >= best {
+			best = v.Bestfame
+		}
+	}
+	return best
 }
 
 func nextCharSlotPrice(account *models.Accounts) int {

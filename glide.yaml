@@ -7,3 +7,6 @@ import:
   version: v1.0.1
 - package: github.com/fsnotify/fsnotify
   version: v1.4.7
+- package: github.com/jasonlvhit/gocron
+- package: github.com/deckarep/golang-set
+  version: v1.7.1
