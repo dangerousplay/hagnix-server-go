@@ -24,14 +24,19 @@ func main() {
 
 	routes.RegisterRoutes(app)
 
-	app.Run(iris.Addr(":" + port()))
+	err := app.Run(iris.Addr(":" + port()))
+
+	if err != nil {
+		logger.Error("error on start listening: ", err)
+	}
+
 }
 
 func port() string {
 	port := os.Getenv("PORT")
 
 	if len(port) < 1 {
-		port = "80"
+		port = "8081"
 	}
 
 	return port

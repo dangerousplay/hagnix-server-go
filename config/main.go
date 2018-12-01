@@ -31,13 +31,12 @@ func Init() {
 			panic(err)
 		}
 	} else {
-		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 
 		if err != nil {
 			panic(err)
 		}
 
-		err = config.LoadFromFile(dir + "/server.json")
+		err = config.LoadFromFile(executablePath + "/server.json")
 
 		if err != nil {
 			panic(err)
