@@ -12,8 +12,7 @@ import (
 var dbEngine *xorm.Engine
 var logger = log.NewSimple()
 
-func Init() error {
-	var err error
+func Init() {
 	dbHost := os.Getenv("DB_HOST")
 	dbDatabase := os.Getenv("DB_DATABASE")
 	dbUser := os.Getenv("DB_USER")
@@ -39,25 +38,27 @@ func Init() error {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbUser, dbPassword, dbHost, 3306, dbDatabase)
 
-	dbEngine, err = xorm.NewEngine("mysql", dsn)
+	dbEnginex, err := xorm.NewEngine("mysql", dsn)
+
+	if err != nil {
+		panic(err)
+	}
 
 	logger.Info("[SQL] Database connected.")
 
 	logger.Info("[SQL] Registering database entities...")
 
-	dbEngine.SetLogger(dBLogger{})
+	dbEnginex.SetLogger(dBLogger{})
+
+	dbEngine = dbEnginex
 
 	//registerEntities()
 
-	return err
 }
 
 func GetDBEngine() *xorm.Engine {
 	if dbEngine == nil {
-		err := Init()
-		if err != nil {
-			panic(err)
-		}
+		Init()
 	}
 
 	return dbEngine

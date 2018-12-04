@@ -7,6 +7,7 @@ import (
 	"hagnix-server-go1/database/models"
 	"hagnix-server-go1/routes/modelxml"
 	"hagnix-server-go1/routes/utils"
+	"k8s.io/apimachinery/pkg/util/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -264,10 +265,11 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 		Verified:                verifiedEmail,
 		Credits:                 stats.Credits,
 		FortuneTokens:           stats.Fortunetokens,
-		NextCharSlotPrice:       nextCharSlotPrice(account),
+		NextCharSlotPrice:       NextCharSlotPrice(account),
 		BeginnerPackageTimeLeft: 0,
 		PetYardType:             account.Petyardtype,
 		ArenaTickets:            0,
+		IsAgeVerified:           account.Isageverified,
 
 		Stats: modelxml.StatsXML{
 			ClassStats:   classesXML,
@@ -360,7 +362,7 @@ func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml
 		}
 
 		if success {
-			charXML.Pet = modelxml.PetItemXML{
+			charXML.Pet = &modelxml.PetItemXML{
 				SkinName:        pet.Skinname,
 				Type:            pet.Objtype,
 				InstanceId:      pet.Petid,
@@ -375,6 +377,11 @@ func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml
 	}
 
 	return charsXML, err
+}
+
+func (service *AccountService) GetRandomName() string {
+	rands := rand.IntnRange(0, len(randomNames))
+	return randomNames[rands]
 }
 
 func toAbilitiesXML(abilities models.Pets) []modelxml.AbilityItemXML {
@@ -408,12 +415,16 @@ func getMaxCharFame(classes []models.Classstats) int {
 	return best
 }
 
-func nextCharSlotPrice(account *models.Accounts) int {
+func NextCharSlotPrice(account *models.Accounts) int {
+	return NextCharSlotPriceByChars(account.Maxcharslot)
+}
+
+func NextCharSlotPriceByChars(chars int) int {
 	var price int
 
-	if account.Maxcharslot == 1 {
+	if chars == 1 {
 		price = 600
-	} else if account.Maxcharslot == 2 {
+	} else if chars == 2 {
 		price = 800
 	} else {
 		price = 1000

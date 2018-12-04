@@ -51,22 +51,22 @@ type AccountXML struct {
 	XMLName                 xml.Name `xml:"Account"`
 	Id                      int64    `xml:"AccountId"`
 	Name                    string   `xml:"Name"`
-	Namechosen              bool     `xml:"NameChosen"`
-	Admin                   bool     `xml:"Admin"`
-	Verified                bool     `xml:"VerifiedEmail"`
+	Namechosen              bool     `xml:"NameChosen,omitempty"`
+	Admin                   bool     `xml:"Admin,omitempty"`
+	Verified                bool     `xml:"VerifiedEmail,omitempty"`
 	Credits                 int      `xml:"Credits"`
 	FortuneTokens           int      `xml:"FortuneTokens"`
 	NextCharSlotPrice       int      `xml:"NextCharSlotPrice"`
 	BeginnerPackageTimeLeft int      `xml:"BeginnerPackageTimeLeft"`
-	PetYardType             int      `xml:"PetYardType"`
-	ArenaTickets            int      `xml:"ArenaTickets"`
-	IsAgeVerified           int      `xml:"IsAgeVerified"`
-	Banned                  bool     `xml:"Banned"`
-	Stats                   StatsXML
-	DailyQuest              DailyQuestXML
+	Vault                   VaultXML
 	Guild                   GuildXML
 	Gifts                   GiftsXML
-	Vault                   VaultXML
+	PetYardType             int           `xml:"PetYardType"`
+	ArenaTickets            int           `xml:"ArenaTickets"`
+	DailyQuest              DailyQuestXML `xml:",omitempty"`
+	IsAgeVerified           int           `xml:"IsAgeVerified"`
+	Banned                  bool          `xml:"Banned,omitempty"`
+	Stats                   StatsXML
 }
 
 var DailyQuestDescriptions = []string{

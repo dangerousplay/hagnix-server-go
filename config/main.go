@@ -36,7 +36,7 @@ func Init() {
 			panic(err)
 		}
 
-		err = config.LoadFromFile(executablePath + "/server.json")
+		err = config.LoadFromFile(executablePath + "/app/server.json")
 
 		if err != nil {
 			panic(err)

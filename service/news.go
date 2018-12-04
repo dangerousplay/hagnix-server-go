@@ -14,7 +14,7 @@ func (news *NewsService) GetNews() ([]modelxml.NewsItemXML, error) {
 	var newsM []models.News
 	var newsXML = []modelxml.NewsItemXML{}
 
-	err := database.GetDBEngine().OrderBy("date").Limit(10).Find(&newsM)
+	err := database.GetDBEngine().Limit(10).Find(&newsM)
 
 	if err != nil {
 		return nil, err

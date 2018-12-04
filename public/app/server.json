@@ -1,0 +1,9 @@
+{
+"VerifyEmail": false,
+  "ServerDomain": "",
+  "Servers": [{
+    "Name": "localhost",
+    "Address": "localhost",
+    "Location": ""
+  }]
+}

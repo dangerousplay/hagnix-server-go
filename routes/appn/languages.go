@@ -6,7 +6,7 @@ import (
 )
 
 func handleLanguage(ctx iris.Context) {
-	language := ctx.URLParam("languageType")
+	language := ctx.PostValue("languageType")
 
 	file := config.GetFilesConfig().Languages[language]
 

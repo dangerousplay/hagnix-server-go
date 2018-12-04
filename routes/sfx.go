@@ -6,4 +6,5 @@ import (
 
 func handleSfx(app *iris.Application, dir string) {
 	app.StaticWeb("/sfx", dir+"/sfx")
+	app.StaticWeb("/music", dir+"/sfx/music")
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -76,4 +77,25 @@ func AppendCommaSpaceSeparated(string string, ints []int) string {
 	csv := ToCommaSpaceSeparated(ints)
 
 	return string + ", " + csv
+}
+
+func XMLSelfClosed(xml string) (string, error) {
+	r, err := regexp.Compile(`<([a-zA-Z0-9]*)><(\\|\/)([a-zA-Z0-9]*)>`)
+	matches := r.FindAllString(xml, -1)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(matches) > 0 {
+		r, err = regexp.Compile("<([a-zA-Z0-9]*)>")
+		for i := 0; i < len(matches); i++ {
+
+			xmlTag := r.FindString(matches[i])
+			xmlTag = strings.Replace(xmlTag, "<", "", -1)
+			xmlTag = strings.Replace(xmlTag, ">", "", -1)
+			xml = strings.Replace(xml, matches[i], "<"+xmlTag+" />", -1)
+		}
+	}
+	return xml, err
 }
