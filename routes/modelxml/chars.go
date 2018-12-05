@@ -114,29 +114,19 @@ type ItemCostXML struct {
 	Price       string `xml:",innerxml"`
 }
 
-type ClassWrapper struct {
-	Classes []ClassAvailabilityXML
-}
-
-type ItemsWrapper struct{ ItemCost []ItemCostXML }
-
-type MaxClassWrapper struct{ MaxClasses []MaxClassLevelItem }
-
-type ServersWrapper struct{ Servers []ServerItemXML }
-
 type CharsXML struct {
-	XMLName           xml.Name        `xml:"Chars"`
-	Char              []CharXML       `xml:"Char"`
-	NextCharId        int             `xml:"nextCharId,attr"`
-	MaxNumChars       int             `xml:"maxNumChars,attr"`
-	Account           AccountXML      `xml:"Account"`
-	NewsXML           []NewsItemXML   `xml:"News"`
-	Servers           ServersWrapper  `xml:"Servers"`
-	OwnedSkins        string          `xml:"OwnedSkins,omitempty"`
-	TOSPopup          *int            `xml:"TOSPopup"`
-	Lat               string          `xml:"Lat,omitempty"`
-	Long              string          `xml:"Long,omitempty"`
-	Classes           ClassWrapper    `xml:"ClassAvailabilityList"`
-	ItemCosts         ItemsWrapper    `xml:"ItemCosts"`
-	MaxClassLevelList MaxClassWrapper `xml:"MaxClassLevelList"`
+	XMLName           xml.Name               `xml:"Chars"`
+	Char              []CharXML              `xml:"Char"`
+	NextCharId        int                    `xml:"nextCharId,attr"`
+	MaxNumChars       int                    `xml:"maxNumChars,attr"`
+	Account           AccountXML             `xml:"Account"`
+	NewsXML           []NewsItemXML          `xml:"News>Item"`
+	Servers           []ServerItemXML        `xml:"Servers>Server"`
+	OwnedSkins        string                 `xml:"OwnedSkins,omitempty"`
+	TOSPopup          *int                   `xml:"TOSPopup"`
+	Lat               string                 `xml:"Lat,omitempty"`
+	Long              string                 `xml:"Long,omitempty"`
+	Classes           []ClassAvailabilityXML `xml:"ClassAvailabilityList>ClassAvailability"`
+	ItemCosts         []ItemCostXML          `xml:"ItemCosts>ItemCost"`
+	MaxClassLevelList []MaxClassLevelItem    `xml:"MaxClassLevelList>MaxClassLevel"`
 }

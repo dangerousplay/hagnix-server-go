@@ -17,9 +17,6 @@ func handleList(ctx iris.Context) {
 		return
 	}
 
-	if len(password) < 1 {
-	}
-
 	news, err := service.GetNewsService().GetNews()
 
 	if utils.DefaultErrorHandler(ctx, err, logger) {
@@ -41,10 +38,10 @@ func handleList(ctx iris.Context) {
 			NextCharId:        1,
 			MaxNumChars:       2,
 			NewsXML:           news,
-			Servers:           modelxml.ServersWrapper{Servers: servers},
-			Classes:           modelxml.ClassWrapper{Classes: modelxml.Classes},
-			MaxClassLevelList: modelxml.MaxClassWrapper{MaxClasses: modelxml.MaxClassLevels},
-			ItemCosts:         modelxml.ItemsWrapper{ItemCost: modelxml.Items},
+			Servers:           servers,
+			Classes:           modelxml.Classes,
+			MaxClassLevelList: modelxml.MaxClassLevels,
+			ItemCosts:         modelxml.Items,
 		}
 
 		ctx.XML(chars)
@@ -76,12 +73,12 @@ func handleList(ctx iris.Context) {
 		MaxNumChars:       account.Maxcharslot,
 		OwnedSkins:        account.Ownedskins,
 		NewsXML:           news,
-		Servers:           modelxml.ServersWrapper{Servers: servers},
+		Servers:           servers,
 		TOSPopup:          tos,
 		Char:              characters,
-		Classes:           modelxml.ClassWrapper{Classes: modelxml.Classes},
-		MaxClassLevelList: modelxml.MaxClassWrapper{MaxClasses: modelxml.MaxClassLevels},
-		ItemCosts:         modelxml.ItemsWrapper{ItemCost: modelxml.Items},
+		Classes:           modelxml.Classes,
+		MaxClassLevelList: modelxml.MaxClassLevels,
+		ItemCosts:         modelxml.Items,
 	}
 
 	ctx.XML(chars)

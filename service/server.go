@@ -89,8 +89,6 @@ func getUsage(address string) (float64, error) {
 func updateServers() {
 	serversList := config.GetConfig().ServerConfig.Servers
 
-	servers.Clear()
-
 	for _, v := range serversList {
 		usage, err := getUsage(v.Address)
 
