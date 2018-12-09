@@ -173,7 +173,7 @@ func (service *AccountService) NextCharId(account *models.Accounts) (int, error)
 func (service *AccountService) VerifyGenerateAccountXML(uuid string, password string) (*modelxml.AccountXML, *models.Accounts, error) {
 	account, err := service.Verify(uuid, password)
 
-	if err != nil {
+	if err != nil || account == nil {
 		return nil, nil, err
 	}
 

@@ -54,6 +54,11 @@ func handleList(ctx iris.Context) {
 		return
 	}
 
+	if accountXML == nil {
+		ctx.XML(messages.BadRequest)
+		return
+	}
+
 	charId, err := service.GetAccountService().NextCharId(account)
 	characters, err2 := service.GetAccountService().GetCharsXML(account)
 
@@ -67,6 +72,12 @@ func handleList(ctx iris.Context) {
 		tos = &account.Acceptednewtos
 	}
 
+	classes, err := service.GetAccountService().GetAvailableClasses(account)
+
+	if utils.DefaultErrorHandler(ctx, err, logger) {
+		return
+	}
+
 	chars := &modelxml.CharsXML{
 		Account:           *accountXML,
 		NextCharId:        charId,
@@ -76,7 +87,7 @@ func handleList(ctx iris.Context) {
 		Servers:           servers,
 		TOSPopup:          tos,
 		Char:              characters,
-		Classes:           modelxml.Classes,
+		Classes:           classes,
 		MaxClassLevelList: modelxml.MaxClassLevels,
 		ItemCosts:         modelxml.Items,
 	}
