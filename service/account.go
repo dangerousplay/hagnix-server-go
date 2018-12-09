@@ -177,16 +177,22 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 		return nil, nil, err
 	}
 
+	xmlt, err := generateAccountXML(account)
+
+	return xmlt, account, err
+}
+
+func generateAccountXML(account *models.Accounts) (*modelxml.AccountXML, error) {
 	stats := &models.Stats{}
 
 	success, err := database.GetDBEngine().Where("accId = ?", account.Id).Get(stats)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if !success {
-		return nil, nil, errors.New("stats for account not found")
+		return nil, errors.New("stats for account not found")
 	}
 
 	var verifiedEmail = false
@@ -206,7 +212,7 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 	err = database.GetDBEngine().Where("accId = ?", account.Id).Find(&classes)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	var dailyQuest models.Dailyquests
@@ -214,7 +220,7 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 	success, err = database.GetDBEngine().Where("accId = ?", account.Id).Get(&dailyQuest)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	var imageIndex int
@@ -236,7 +242,7 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 	goals, err := utils.FromCommaSpaceSeparated(dailyQuest.Goals)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	var guild models.Guilds
@@ -244,7 +250,7 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 	success, err = database.GetDBEngine().Where("id = ?", account.Guild).Get(&guild)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	var vaults []models.Vaults
@@ -252,7 +258,7 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 	err = database.GetDBEngine().Where("accId = ?", account.Id).Find(&vaults)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	classesXML := modelxml.ToClassStatsXML(classes)
@@ -297,8 +303,21 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 			Gifts: account.Gifts,
 		},
 	}
+	return &xmlt, err
+}
 
-	return &xmlt, account, nil
+func (service *AccountService) VerifyGenerateAccountXMLbyId(uuid string) (*modelxml.AccountXML, *models.Accounts, error) {
+	var account *models.Accounts
+
+	_, err := database.GetDBEngine().Id(uuid).Get(account)
+
+	if err != nil || account == nil {
+		return nil, nil, err
+	}
+
+	xmlt, err := generateAccountXML(account)
+
+	return xmlt, account, err
 }
 
 func (service *AccountService) GetAvailableClasses(accounts *models.Accounts) ([]modelxml.ClassAvailabilityXML, error) {
