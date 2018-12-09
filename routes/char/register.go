@@ -12,4 +12,5 @@ func RegisterRoutes(app *iris.Application) {
 
 	capp.Post("/delete", deleteChar)
 	capp.Post("/list", handleList)
+	capp.Post("/purchaseClassUnlock", handlePurchase)
 }
