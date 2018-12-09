@@ -301,6 +301,45 @@ func (service *AccountService) VerifyGenerateAccountXML(uuid string, password st
 	return &xmlt, account, nil
 }
 
+func (service *AccountService) GetAvailableClasses(accounts *models.Accounts) ([]modelxml.ClassAvailabilityXML, error) {
+	var classes []models.Unlockedclasses
+	err := database.GetDBEngine().Cols("class", "available").Where("accId = ?", accounts.Id).Find(&classes)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(classes) < 1 {
+		session := database.GetDBEngine().NewSession()
+		err = session.Begin()
+
+		defer session.Close()
+
+		if err != nil {
+			session.Rollback()
+			return nil, err
+		}
+
+		for _, v := range modelxml.Classes {
+			session.Insert(models.Unlockedclasses{Class: v.Class, Available: v.Restricted})
+		}
+		err = session.Commit()
+
+		if err != nil {
+			session.Rollback()
+			return nil, err
+		}
+
+		return modelxml.Classes, err
+	} else {
+		var xmls []modelxml.ClassAvailabilityXML
+		for _, v := range classes {
+			xmls = append(xmls, modelxml.ClassAvailabilityXML{Class: v.Class, Restricted: v.Available})
+		}
+		return xmls, nil
+	}
+}
+
 func (service *AccountService) GenerateAccountXML(uuid string, password string) (*modelxml.AccountXML, error) {
 	account, _, err := service.VerifyGenerateAccountXML(uuid, password)
 	return account, err
