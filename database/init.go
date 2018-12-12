@@ -2,15 +2,14 @@ package database
 
 import (
 	"fmt"
-	"github.com/InVisionApp/go-logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	"github.com/ivahaev/go-logger"
 	"hagnix-server-go1/database/models"
 	"os"
 )
 
 var dbEngine *xorm.Engine
-var logger = log.NewSimple()
 
 func Init() {
 	dbHost := os.Getenv("DB_HOST")

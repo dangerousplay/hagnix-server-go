@@ -1,12 +1,11 @@
 package config
 
 import (
-	"github.com/InVisionApp/go-logger"
+	"github.com/ivahaev/go-logger"
 	"os"
 	"path/filepath"
 )
 
-var logger = log.NewSimple()
 var config = &ROTMGConfig{}
 var filesConfig = &FilesConfig{}
 var executablePath string
@@ -44,6 +43,8 @@ func Init() {
 	}
 
 	initWatcher()
+
+	initGRPC()
 
 	config.Loaded = true
 }

@@ -67,7 +67,7 @@ func handlePurchaseSkin(ctx iris.Context) {
 
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -84,7 +84,7 @@ func handlePurchaseSkin(ctx iris.Context) {
 
 	_, err2 := database.GetDBEngine().Cols("credits").Where("accId = ?", account.Id).Get(stats)
 
-	if utils.DefaultErrorHandler(ctx, err2, logger) {
+	if utils.DefaultErrorHandler(ctx, err2) {
 		return
 	}
 
@@ -95,7 +95,7 @@ func handlePurchaseSkin(ctx iris.Context) {
 
 	contains, pSkins, err := service.GetAccountService().ContainsAndGetSkin(account, skinNumber)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -112,13 +112,13 @@ func handlePurchaseSkin(ctx iris.Context) {
 
 	rows, err := session.Cols("ownedSkins").Where("uuid = ?", account.Id).Update(&models.Accounts{Ownedskins: utils.ToCommaSpaceSeparated(pSkins)})
 
-	if utils.HandleSessionRowsUpdated(ctx, session, err, logger, rows, 1) {
+	if utils.HandleSessionRowsUpdated(ctx, session, err, rows, 1) {
 		return
 	}
 
 	rows, err = session.Cols("credits").Where("accId = ?").Update(&models.Stats{Credits: stats.Credits - skin.Price})
 
-	if utils.HandleSessionRowsUpdated(ctx, session, err, logger, rows, 1) {
+	if utils.HandleSessionRowsUpdated(ctx, session, err, rows, 1) {
 		return
 	}
 

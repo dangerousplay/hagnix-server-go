@@ -39,7 +39,7 @@ func handleChangeEmail(ctx iris.Context) {
 
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -62,7 +62,7 @@ func handleValidateEmail(ctx iris.Context) {
 
 	rows, err := database.GetDBEngine().Cols("verified").Where("authToken = ?", authToken).Update(&models.Accounts{Verified: 1})
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

@@ -19,7 +19,7 @@ func handleList(ctx iris.Context) {
 
 	news, err := service.GetNewsService().GetNews()
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -50,7 +50,7 @@ func handleList(ctx iris.Context) {
 
 	accountXML, account, err := service.GetAccountService().VerifyGenerateAccountXML(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -62,7 +62,7 @@ func handleList(ctx iris.Context) {
 	charId, err := service.GetAccountService().NextCharId(account)
 	characters, err2 := service.GetAccountService().GetCharsXML(account)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) || utils.DefaultErrorHandler(ctx, err2, logger) {
+	if utils.DefaultErrorHandler(ctx, err) || utils.DefaultErrorHandler(ctx, err2) {
 		return
 	}
 
@@ -74,7 +74,7 @@ func handleList(ctx iris.Context) {
 
 	classes, err := service.GetAccountService().GetAvailableClasses(account)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

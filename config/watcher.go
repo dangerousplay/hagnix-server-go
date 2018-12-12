@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/fsnotify/fsnotify"
+	"github.com/ivahaev/go-logger"
 	"io/ioutil"
 	"os"
 	"strings"

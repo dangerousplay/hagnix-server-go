@@ -1,7 +1,6 @@
 package _package
 
 import (
-	"github.com/InVisionApp/go-logger"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/database"
 	"hagnix-server-go1/database/models"
@@ -9,8 +8,6 @@ import (
 	"hagnix-server-go1/routes/utils"
 	"time"
 )
-
-var logger = log.NewSimple()
 
 func RegisterRoutes(app *iris.Application) {
 	papp := app.Party("package")
@@ -21,7 +18,7 @@ func handleGetPackage(ctx iris.Context) {
 	packages := []models.Packages{}
 	err := database.GetDBEngine().Where("endDate >= ?", time.Now().Unix()).Find(&packages)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

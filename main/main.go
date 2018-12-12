@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/InVisionApp/go-logger"
+	"github.com/ivahaev/go-logger"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/config"
 	"hagnix-server-go1/database"
@@ -9,8 +9,6 @@ import (
 	"hagnix-server-go1/service"
 	"os"
 )
-
-var logger = log.NewSimple()
 
 func main() {
 	app := iris.New()

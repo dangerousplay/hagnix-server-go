@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package hagnix;
+
+message AuthRequest {
+    string user = 1;
+    string password = 2;
+}
+
+message AuthResponse {
+    string token = 1;
+}
+
+message EmailRequest {
+    string email = 1;
+}
+
+message Empty {
+
+}
+
+message Player {
+    string email = 1;
+    string name = 2;
+    string admin = 3;
+    int64 token = 4;
+    int64 gold = 5;
+    string password = 6;
+    bool banned = 7;
+}
+
+message Server {
+    string name = 1;
+    int64 players = 2;
+    int64 capacity = 3;
+}
+
+message ListPlayersResponse {
+    repeated Player players = 1;
+}
+
+message KickRequest {
+    string email = 1;
+    string reason = 2;
+}
+
+message CreatePlayerRequest {
+    string email = 1;
+    string password = 2;
+    string objectId = 3;
+}
+
+message CharacterStats {
+    int64 Shots = 1;
+    int64 ShotsThatDamage = 2;
+    int64 SpecialAbilityUses = 3;
+    int64 TilesUncovered = 4;
+    int64 Teleports = 5;
+    int64 PotionsDrunk = 6;
+    int64 MonsterKills = 7;
+    int64 MonsterAssists = 8;
+    int64 GodKills = 9;
+    int64 GodAssists = 10;
+    int64 CubeKills = 11;
+    int64 OryxKills = 12;
+    int64 QuestsCompleted = 13;
+    int64 PirateCavesCompleted = 14;
+    int64 UndeadLairsCompleted = 15;
+    int64 AbyssOfDemonsCompleted = 16;
+    int64 SnakePitsCompleted = 17;
+    int64 SpiderDensCompleted = 18;
+    int64 SpriteWorldsCompleted = 19;
+    int64 LevelUpAssists = 20;
+    int64 MinutesActive = 21;
+    int64 TombsCompleted = 22;
+    int64 TrenchesCompleted = 23;
+    int64 JunglesCompleted = 24;
+    int64 ManorsCompleted = 25;
+}
+
+service Game {
+    rpc KickPlayer (KickRequest) returns (Empty) {
+    }
+    rpc ListPlayers (Empty) returns (ListPlayersResponse) {
+    }
+    rpc GetPlayer (EmailRequest) returns (Player) {
+    }
+    rpc BanPlayer (EmailRequest) returns (Empty) {
+    }
+    rpc PardonPlayer (EmailRequest) returns (Empty) {
+    }
+    rpc LoggedPlayer (EmailRequest) returns (Empty) {
+    }
+    rpc AuthorizePlayer (EmailRequest) returns (Empty) {
+    }
+    rpc CreatePlayer (CreatePlayerRequest) returns (Player) {
+    }
+    rpc DeletePlayer (EmailRequest) returns (Empty) {
+    }
+    rpc ChangePlayer (Player) returns (Empty) {
+    }
+    rpc ServerInfo (Empty) returns (Server) {
+    }
+    rpc GetStats (EmailRequest) returns (CharacterStats) {
+    }
+}

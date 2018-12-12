@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/ivahaev/go-logger"
 	"hagnix-server-go1/database"
 	"hagnix-server-go1/database/models"
 	"hagnix-server-go1/routes/modelxml"

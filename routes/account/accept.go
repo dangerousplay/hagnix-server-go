@@ -1,7 +1,6 @@
 package account
 
 import (
-	"github.com/InVisionApp/go-logger"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/database"
 	"hagnix-server-go1/database/models"
@@ -9,8 +8,6 @@ import (
 	"hagnix-server-go1/routes/utils"
 	"hagnix-server-go1/service"
 )
-
-var logger = log.NewSimple()
 
 func handleAccepTOS(ctx iris.Context) {
 	guid := ctx.URLParam("guid")
@@ -23,7 +20,7 @@ func handleAccepTOS(ctx iris.Context) {
 
 	account, err := service.GetAccountService().VerifyOnly(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -34,7 +31,7 @@ func handleAccepTOS(ctx iris.Context) {
 
 	_, err = database.GetDBEngine().Cols("acceptedNewTos").Where("uuid = ?", guid).Update(&models.Accounts{Acceptednewtos: 1})
 
-	if !utils.DefaultErrorHandler(ctx, err, logger) {
+	if !utils.DefaultErrorHandler(ctx, err) {
 		ctx.XML(messages.DefaultSuccess)
 	}
 

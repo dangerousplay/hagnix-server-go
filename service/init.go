@@ -1,11 +1,10 @@
 package service
 
 import (
-	"github.com/InVisionApp/go-logger"
+	"github.com/ivahaev/go-logger"
 	"github.com/jasonlvhit/gocron"
 )
 
-var logger = log.NewSimple()
 var scheduler = gocron.NewScheduler()
 
 func Init() {

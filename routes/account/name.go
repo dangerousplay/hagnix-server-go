@@ -17,7 +17,7 @@ func handleSetName(ctx iris.Context) {
 
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -32,13 +32,13 @@ func handleSetName(ctx iris.Context) {
 		return
 	}
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
 	rows, err := database.GetDBEngine().Cols("name").Where("uuid = ?", account.Id).Update(&models.Accounts{Name: name, Namechosen: 1})
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

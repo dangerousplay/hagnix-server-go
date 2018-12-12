@@ -34,14 +34,14 @@ func handleRegister(ctx iris.Context) {
 
 	exist, err := service.GetAccountService().Verify(guid, "")
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
 	if exist != nil && exist.Guest == 1 {
 		exist2, err2 := service.GetAccountService().AccountExists(newGuid)
 
-		if utils.DefaultErrorHandler(ctx, err2, logger) {
+		if utils.DefaultErrorHandler(ctx, err2) {
 			return
 		}
 
@@ -52,7 +52,7 @@ func handleRegister(ctx iris.Context) {
 
 		rows, err := database.GetDBEngine().Where("uuid = ?", guid).Update(&models.Accounts{Name: newGuid, Uuid: newGuid, Guest: 0, Password: utils.HashStringSHA1(newPassword)})
 
-		if utils.DefaultErrorHandler(ctx, err, logger) {
+		if utils.DefaultErrorHandler(ctx, err) {
 			return
 		}
 
@@ -87,7 +87,7 @@ func handleVerify(ctx iris.Context) {
 
 	account, err := service.GetAccountService().GenerateAccountXML(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

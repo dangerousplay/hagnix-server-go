@@ -21,7 +21,7 @@ func deleteChar(ctx iris.Context) {
 
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -32,7 +32,7 @@ func deleteChar(ctx iris.Context) {
 
 	rows, err := database.GetDBEngine().Where("accId = ? AND charId = ?", account.Id, charId).Delete(&models.Characters{})
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

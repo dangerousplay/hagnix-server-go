@@ -14,7 +14,7 @@ func handlePurchaseCharSlot(ctx iris.Context) {
 	password := ctx.URLParam("password")
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -27,7 +27,7 @@ func handlePurchaseCharSlot(ctx iris.Context) {
 
 	success, err := database.GetDBEngine().Cols("credits").Where("accId = ?", account.Id).Get(&stats)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -49,7 +49,7 @@ func handlePurchaseCharSlot(ctx iris.Context) {
 
 	rows, err := session.Cols("credits").Where("accId = ?", account.Id).Update(&models.Stats{Credits: stats.Credits - nextCharPrice})
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		session.Rollback()
 		return
 	}
@@ -57,13 +57,13 @@ func handlePurchaseCharSlot(ctx iris.Context) {
 	if rows > 0 {
 		rows, err = session.Cols("maxCharSlot").Where("id = ?", account.Id).Update(&models.Accounts{Maxcharslot: account.Maxcharslot + 1})
 
-		if utils.DefaultErrorHandler(ctx, err, logger) || rows < 1 {
+		if utils.DefaultErrorHandler(ctx, err) || rows < 1 {
 			session.Rollback()
 		}
 
 		err := session.Commit()
 
-		if utils.DefaultErrorHandler(ctx, err, logger) {
+		if utils.DefaultErrorHandler(ctx, err) {
 			return
 		}
 

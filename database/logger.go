@@ -10,7 +10,7 @@ var bLogger = log.NewSimple()
 type dBLogger struct{}
 
 func (dBLogger) Debug(v ...interface{}) {
-	bLogger.Debug(logger)
+	bLogger.Debug(v)
 }
 
 // Debugf empty implementation

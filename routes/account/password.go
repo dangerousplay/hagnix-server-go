@@ -22,13 +22,13 @@ func handleChangePassword(ctx iris.Context) {
 
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
 	rows, err := database.GetDBEngine().Cols("password").Where("uuid = ?", account.Uuid).Update(&models.Accounts{Password: utils.HashStringSHA1(newPassword)})
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -54,7 +54,7 @@ func handleResetPassword(ctx iris.Context) {
 
 	rows, err := database.GetDBEngine().Cols("password").Where("authToken = ?", authToken).Update(&models.Accounts{Password: utils.HashStringSHA1(newPassword)})
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

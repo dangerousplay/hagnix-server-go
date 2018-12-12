@@ -17,7 +17,7 @@ func handleFame(ctx iris.Context) {
 
 	success, err := database.GetDBEngine().Where("accId = ? AND charId = ?", accountId, charId).Get(&death)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -30,7 +30,7 @@ func handleFame(ctx iris.Context) {
 
 	success, err = database.GetDBEngine().Id(accountId).Get(&account)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -43,7 +43,7 @@ func handleFame(ctx iris.Context) {
 
 	acxml, acc, err := service.GetAccountService().VerifyGenerateAccountXMLbyId(accountId)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 

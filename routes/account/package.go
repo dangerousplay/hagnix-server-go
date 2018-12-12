@@ -28,7 +28,7 @@ func handlePurchasePackage(ctx iris.Context) {
 
 	account, err := service.GetAccountService().Verify(guid, password)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -41,7 +41,7 @@ func handlePurchasePackage(ctx iris.Context) {
 
 	success, err := database.GetDBEngine().Where("id = ? AND endDate >= now()", packageId).Get(&packages)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -54,7 +54,7 @@ func handlePurchasePackage(ctx iris.Context) {
 
 	success, err = database.GetDBEngine().Cols("credits").Where("accId = ?", account.Id).Get(&stats)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -71,7 +71,7 @@ func handlePurchasePackage(ctx iris.Context) {
 
 	err = json.Unmarshal([]byte(packages.Contents), contents)
 
-	if utils.DefaultErrorHandler(ctx, err, logger) {
+	if utils.DefaultErrorHandler(ctx, err) {
 		return
 	}
 
@@ -83,14 +83,14 @@ func handlePurchasePackage(ctx iris.Context) {
 
 	rows, err := session.Cols("gifts").Where("uuid = ?", account.Uuid).Update(&models.Accounts{Gifts: newGift})
 
-	if utils.HandleSessionRowsUpdated(ctx, session, err, logger, rows, 1) {
+	if utils.HandleSessionRowsUpdated(ctx, session, err, rows, 1) {
 		return
 	}
 
 	if contents.CharSlots > 0 {
 		rows, err = session.Cols("maxCharSlot").Where("uuid = ?", account.Uuid).Update(&models.Accounts{Maxcharslot: account.Maxcharslot + contents.CharSlots})
 
-		if utils.HandleSessionRowsUpdated(ctx, session, err, logger, rows, int64(contents.CharSlots)) {
+		if utils.HandleSessionRowsUpdated(ctx, session, err, rows, int64(contents.CharSlots)) {
 			return
 		}
 	}
@@ -98,7 +98,7 @@ func handlePurchasePackage(ctx iris.Context) {
 	if contents.VaultChests > 0 {
 		rows, err := service.GetAccountService().CreateChests(account, contents.VaultChests)
 
-		if utils.HandleSessionRowsUpdated(ctx, session, err, logger, rows, int64(contents.VaultChests)) {
+		if utils.HandleSessionRowsUpdated(ctx, session, err, rows, int64(contents.VaultChests)) {
 			return
 		}
 	}

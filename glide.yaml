@@ -10,3 +10,6 @@ import:
 - package: github.com/jasonlvhit/gocron
 - package: github.com/deckarep/golang-set
   version: v1.7.1
+- package: google.golang.org/grpc
+  version: v1.17.0
+- package: github.com/ivahaev/go-logger
