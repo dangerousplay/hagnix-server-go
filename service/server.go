@@ -12,7 +12,7 @@ import (
 )
 
 var server = &ServerService{}
-var servers = mapset.NewThreadUnsafeSet()
+var servers = mapset.NewSet()
 
 type ServerService struct{}
 

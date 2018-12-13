@@ -19,6 +19,18 @@ PORT = Port which will used to server the HTTP server
 
 WSERVER_HOST = Wserver Host which are running gRPC
 
+TLS = Use TLS certificates
+
+TLS_EMAIL = Email of TLS
+
+DOMAIN = Domain to generate TLS
+
+REDIS_HOST = Redis host
+
+REDIS_PORT = Redis Port
+
+REDIS_PASSWORD = Redis Password
+
 <br/><br/><br/>
 
 #### Config Files:

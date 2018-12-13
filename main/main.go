@@ -5,9 +5,11 @@ import (
 	"github.com/kataras/iris"
 	"hagnix-server-go1/config"
 	"hagnix-server-go1/database"
+	"hagnix-server-go1/redis"
 	"hagnix-server-go1/routes"
 	"hagnix-server-go1/service"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -19,19 +21,11 @@ func main() {
 	config.Init()
 	database.Init()
 	service.Init()
+	redis.InitRedis()
 
 	routes.RegisterRoutes(app)
 
-	err := app.Run(iris.Addr("127.0.0.1:" + port()))
-
-	if err != nil {
-		logger.Error("error on start listening: ", err)
-	}
-}
-
-func debug(ctx iris.Context) {
-	logger.Info(ctx.Method() + " " + ctx.RequestPath(true))
-	ctx.Next()
+	startWebServer(app)
 }
 
 func port() string {
@@ -42,4 +36,29 @@ func port() string {
 	}
 
 	return port
+}
+
+func startWebServer(application *iris.Application) {
+	configs := iris.WithConfiguration(iris.Configuration{EnableOptimizations: true})
+
+	TLS := os.Getenv("TLS")
+
+	useTLS, _ := strconv.ParseBool(TLS)
+
+	if !useTLS {
+		err := application.Run(iris.Addr("127.0.0.1:"+port()), configs)
+
+		if err != nil {
+			logger.Error("error on start listening: ", err)
+		}
+	} else {
+		domain := os.Getenv("DOMAIN")
+		email := os.Getenv("TLS_EMAIL")
+
+		err := application.Run(iris.AutoTLS("127.0.0.1:"+port(), domain, email), configs)
+
+		if err != nil {
+			logger.Error(err)
+		}
+	}
 }

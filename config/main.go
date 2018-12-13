@@ -44,7 +44,5 @@ func Init() {
 
 	initWatcher()
 
-	initGRPC()
-
 	config.Loaded = true
 }

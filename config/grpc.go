@@ -2,13 +2,10 @@ package config
 
 import (
 	"golang.org/x/oauth2"
-	"google.golang.org/grpc"
-	"hagnix-server-go1/proto"
 	"os"
 )
 
 var wserverHost = os.Getenv("WSERVER_HOST")
-var gameClient hagnix.GameClient
 
 func initGRPC() {
 	/*perRPC := oauth.NewOauthAccess(oauth.TokenSource{})
@@ -26,19 +23,7 @@ func initGRPC() {
 		),
 	}
 	conn, err := grpc.Dial(":8080", opts...)*/
-
-	conn, err := grpc.Dial(wserverHost)
-
-	if err != nil {
-		panic(err)
-	}
-
-	gameClient = hagnix.NewGameClient(conn)
 	//TODO implement service to Deserialize player FameStats from Characters
-}
-
-func GetGameClient() hagnix.GameClient {
-	return gameClient
 }
 
 type OauthImpl struct {
