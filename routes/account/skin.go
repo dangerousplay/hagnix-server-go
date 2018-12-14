@@ -61,9 +61,9 @@ func (skins *listSkin) findSkin(typ string) *skin {
 }
 
 func handlePurchaseSkin(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
-	skinType := ctx.URLParam("skinType")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
+	skinType := ctx.PostValue("skinType")
 
 	account, err := service.GetAccountService().Verify(guid, password)
 

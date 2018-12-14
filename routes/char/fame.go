@@ -45,7 +45,7 @@ func handleFame(ctx iris.Context) {
 
 	var character models.Characters
 
-	success, err = database.GetDBEngine().Where("accId = ?", accountId).Get(&character)
+	success, err = database.GetDBEngine().Where("charId = ?", charId).Get(&character)
 
 	if utils.DefaultErrorHandler(ctx, err) {
 		return

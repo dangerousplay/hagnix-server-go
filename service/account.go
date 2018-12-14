@@ -92,7 +92,11 @@ func (service *AccountService) Register(email string, password string) (*models.
 
 	session := database.GetDBEngine().NewSession()
 
-	session.Begin()
+	err := session.Begin()
+
+	if err != nil {
+		return nil, err
+	}
 
 	defer session.Close()
 
@@ -109,12 +113,18 @@ func (service *AccountService) Register(email string, password string) (*models.
 		Vaultcount:    1,
 		Maxcharslot:   2,
 		Isageverified: 1,
+		Lastseen:      time.Now(),
 	}
 
-	rows, err := database.GetDBEngine().Insert(account)
+	rows, err := database.GetDBEngine().InsertOne(account)
 
 	if err != nil || rows < 1 {
 		session.Rollback()
+
+		if err != nil {
+			logger.Warn(err)
+		}
+
 		return nil, err
 	}
 
@@ -431,6 +441,12 @@ func toCharXML(accountId int64, chars ...models.Characters) []modelxml.CharXML {
 			continue
 		}
 
+		var dead = false
+
+		if v.Dead != 0 {
+			dead = true
+		}
+
 		charXML := modelxml.CharXML{
 			Id:         v.Charid,
 			ObjectType: v.Chartype,
@@ -454,7 +470,7 @@ func toCharXML(accountId int64, chars ...models.Characters) []modelxml.CharXML {
 			HasBackpack:      v.Hasbackpack,
 			Tex1:             v.Tex1,
 			Tex2:             v.Tex2,
-			Dead:             false,
+			Dead:             dead,
 			PCStats:          v.Famestats,
 			Skin:             v.Skin,
 		}

@@ -11,9 +11,9 @@ import (
 )
 
 func handleChangePassword(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
-	newPassword := ctx.URLParam("newPassword")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
+	newPassword := ctx.PostValue("newPassword")
 
 	if validateLogin(guid, password) && len(password) < 1 {
 		ctx.XML(messages.BadRequest)

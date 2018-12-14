@@ -17,9 +17,9 @@ type packageContents struct {
 }
 
 func handlePurchasePackage(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
-	packageId := ctx.URLParam("packageId")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
+	packageId := ctx.PostValue("packageId")
 
 	if !validateLogin(guid, password) {
 		ctx.XML(messages.BadRequest)

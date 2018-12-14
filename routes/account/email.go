@@ -27,9 +27,9 @@ const verifyFail = `<html>
 </html>`
 
 func handleChangeEmail(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
-	newGuid := ctx.URLParam("newGuid")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
+	newGuid := ctx.PostValue("newGuid")
 
 	if len(newGuid) < 1 {
 		ctx.StatusCode(400)

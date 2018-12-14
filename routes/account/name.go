@@ -11,9 +11,9 @@ import (
 )
 
 func handleSetName(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
-	name := ctx.URLParam("name")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
+	name := ctx.PostValue("name")
 
 	account, err := service.GetAccountService().Verify(guid, password)
 

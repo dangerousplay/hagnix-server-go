@@ -23,7 +23,7 @@ var src = rand.NewSource(time.Now().UnixNano())
 func HashStringSHA1(input string) string {
 	h := sha1.New()
 	h.Write([]byte(input))
-	return fmt.Sprintf("%s", h.Sum(nil))
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 func Hashcode(s string) uint32 {

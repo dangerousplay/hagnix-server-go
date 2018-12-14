@@ -10,8 +10,8 @@ import (
 )
 
 func handlePurchaseCharSlot(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
 	account, err := service.GetAccountService().Verify(guid, password)
 
 	if utils.DefaultErrorHandler(ctx, err) {

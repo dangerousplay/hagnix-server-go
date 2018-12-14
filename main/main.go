@@ -14,7 +14,7 @@ import (
 
 func main() {
 	app := iris.New()
-	app.Logger().SetLevel("disable")
+	app.OnAnyErrorCode(debug)
 
 	logger.Info("Starting ROTMG Server...")
 
@@ -26,6 +26,11 @@ func main() {
 	routes.RegisterRoutes(app)
 
 	startWebServer(app)
+}
+
+func debug(context iris.Context) {
+	logger.Info(context.Request().Method + " " + context.Request().RequestURI)
+	context.Next()
 }
 
 func port() string {

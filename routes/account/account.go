@@ -15,14 +15,14 @@ var alreadyUsed = &messages.Error{RawXml: "Error.emailAlreadyUsed"}
 var emailError = &messages.Error{RawXml: "WebForgotPasswordDialog.emailError"}
 
 func handleRegister(ctx iris.Context) {
-	ignore := ctx.URLParam("ignore")
-	entrytag := ctx.URLParam("entrytag")
-	isAgeVerified := ctx.URLParam("isAgeVerified")
-	newGuid := ctx.URLParam("newGuid")
-	guid := ctx.URLParam("guid")
-	newPassword := ctx.URLParam("newPassword")
+	ignore := ctx.PostValue("ignore")
+	entrytag := ctx.PostValue("entrytag")
+	isAgeVerified := ctx.PostValue("isAgeVerified")
+	newGuid := ctx.PostValue("newGUID")
+	guid := ctx.PostValue("guid")
+	newPassword := ctx.PostValue("newPassword")
 
-	if len(ignore) < 1 || len(entrytag) < 1 || len(isAgeVerified) < 1 {
+	if len(ignore) < 1 || len(entrytag) > 1 || len(isAgeVerified) < 1 {
 		ctx.XML(invalidEmail)
 		return
 	}

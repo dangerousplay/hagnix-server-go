@@ -10,8 +10,8 @@ import (
 )
 
 func handleAccepTOS(ctx iris.Context) {
-	guid := ctx.URLParam("guid")
-	password := ctx.URLParam("password")
+	guid := ctx.PostValue("guid")
+	password := ctx.PostValue("password")
 
 	if len(guid) < 1 && len(password) < 1 {
 		ctx.XML(messages.BadRequest)

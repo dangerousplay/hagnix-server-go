@@ -242,7 +242,7 @@ func (service *FameService) GetDeathFame(account *models.Accounts, character *mo
 		bonus = math.Floor(bonus) + (baseFame+math.Floor(bonus))*0.1
 	}
 
-	if float64(pc.GodKills/pc.GodKills+pc.MonsterKills) > 0.1 {
+	if (pc.GodKills+pc.MonsterKills != 0) && float64(pc.GodKills/(pc.GodKills+pc.MonsterKills)) > 0.1 {
 
 		self := (baseFame + math.Floor(bonus)) * 0.1
 
@@ -255,7 +255,7 @@ func (service *FameService) GetDeathFame(account *models.Accounts, character *mo
 		bonus = math.Floor(bonus) + self
 	}
 
-	if float64(pc.GodKills/pc.GodKills+pc.MonsterKills) > 0.5 {
+	if (pc.GodKills+pc.MonsterKills != 0) && float64(pc.GodKills/(pc.GodKills+pc.MonsterKills)) > 0.5 {
 		self := (baseFame + math.Floor(bonus)) * 0.1
 
 		fame.Bonus = append(fame.Bonus, modelxml.BonusXML{
@@ -279,7 +279,7 @@ func (service *FameService) GetDeathFame(account *models.Accounts, character *mo
 		bonus = math.Floor(bonus) + self
 	}
 
-	if float64(pc.ShotsThatDamage/pc.Shots) > 0.25 {
+	if pc.Shots != 0 && float64(pc.ShotsThatDamage/pc.Shots) > 0.25 {
 		self := (baseFame + math.Floor(bonus)) * 0.1
 
 		fame.Bonus = append(fame.Bonus, modelxml.BonusXML{
@@ -291,7 +291,7 @@ func (service *FameService) GetDeathFame(account *models.Accounts, character *mo
 		bonus = math.Floor(bonus) + self
 	}
 
-	if float64(pc.ShotsThatDamage/pc.Shots) > 0.5 {
+	if pc.Shots != 0 && float64(pc.ShotsThatDamage/pc.Shots) > 0.5 {
 		self := (baseFame + math.Floor(bonus)) * 0.1
 
 		fame.Bonus = append(fame.Bonus, modelxml.BonusXML{
@@ -302,7 +302,7 @@ func (service *FameService) GetDeathFame(account *models.Accounts, character *mo
 
 		bonus = math.Floor(bonus) + self
 	}
-	if float64(pc.ShotsThatDamage/pc.Shots) > 0.75 {
+	if pc.Shots != 0 && float64(pc.ShotsThatDamage/pc.Shots) > 0.75 {
 		self := (baseFame + math.Floor(bonus)) * 0.1
 
 		fame.Bonus = append(fame.Bonus, modelxml.BonusXML{
