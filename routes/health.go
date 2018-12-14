@@ -21,6 +21,7 @@ func handleHealth(ctx iris.Context) {
 		health.State = 500
 	}
 
+	ctx.StatusCode(health.State)
 	ctx.JSON(health)
 }
 
