@@ -308,17 +308,31 @@ func generateAccountXML(account *models.Accounts) (*modelxml.AccountXML, error) 
 }
 
 func (service *AccountService) VerifyGenerateAccountXMLbyId(uuid string) (*modelxml.AccountXML, *models.Accounts, error) {
-	var account *models.Accounts
+	var account models.Accounts
 
-	_, err := database.GetDBEngine().Id(uuid).Get(account)
+	_, err := database.GetDBEngine().Where("id = ?", uuid).Get(&account)
 
-	if err != nil || account == nil {
+	if err != nil {
 		return nil, nil, err
 	}
 
-	xmlt, err := generateAccountXML(account)
+	xmlt, err := generateAccountXML(&account)
 
-	return xmlt, account, err
+	return xmlt, &account, err
+}
+
+func (service *AccountService) VerifyGenerateAccountXMLbyUuid(uuid string) (*modelxml.AccountXML, *models.Accounts, error) {
+	var account models.Accounts
+
+	_, err := database.GetDBEngine().Where("uuid = ?", uuid).Get(&account)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	xmlt, err := generateAccountXML(&account)
+
+	return xmlt, &account, err
 }
 
 func (service *AccountService) GetAvailableClasses(accounts *models.Accounts) ([]modelxml.ClassAvailabilityXML, error) {
@@ -365,6 +379,20 @@ func (service *AccountService) GenerateAccountXML(uuid string, password string) 
 	return account, err
 }
 
+func (service *AccountService) GetCharById(accountId int64, charId int) (*modelxml.CharXML, error) {
+	var chars models.Characters
+	success, err := database.GetDBEngine().Where("id = ?", charId).Get(&chars)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !success {
+		return nil, errors.New("no character found by id")
+	}
+	return &toCharXML(accountId, chars)[0], err
+}
+
 func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml.CharXML, error) {
 	var chars []models.Characters
 	err := database.GetDBEngine().Where("accId = ? AND dead = FALSE", account.Id).Find(&chars)
@@ -373,6 +401,17 @@ func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml
 		return nil, err
 	}
 
+	var charsXML = toCharXML(account.Id, chars...)
+
+	return charsXML, err
+}
+
+func (service *AccountService) GetRandomName() string {
+	rands := rand.IntnRange(0, len(randomNames))
+	return randomNames[rands]
+}
+
+func toCharXML(accountId int64, chars ...models.Characters) []modelxml.CharXML {
 	var charsXML []modelxml.CharXML
 
 	for _, v := range chars {
@@ -385,7 +424,7 @@ func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml
 
 		var pet models.Pets
 
-		success, err := database.GetDBEngine().Where("accId = ? AND petId = ?", account.Id, v.Petid).Get(&pet)
+		success, err := database.GetDBEngine().Where("accId = ? AND petId = ?", accountId, v.Petid).Get(&pet)
 
 		if err != nil {
 			logger.Warn("Can't load pet: " + err.Error())
@@ -434,13 +473,7 @@ func (service *AccountService) GetCharsXML(account *models.Accounts) ([]modelxml
 
 		charsXML = append(charsXML, charXML)
 	}
-
-	return charsXML, err
-}
-
-func (service *AccountService) GetRandomName() string {
-	rands := rand.IntnRange(0, len(randomNames))
-	return randomNames[rands]
+	return charsXML
 }
 
 func toAbilitiesXML(abilities models.Pets) []modelxml.AbilityItemXML {

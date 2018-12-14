@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/ivahaev/go-logger"
+	"hagnix-server-go1/routes/modelxml"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -19,6 +20,7 @@ func initWatcher() {
 
 	watchs.Add(executablePath + "/app")
 	watchs.Add(executablePath + "/app/Languages")
+	watchs.Add(executablePath + "/game")
 
 	watcher = watchs
 
@@ -95,5 +97,7 @@ func reload() {
 			}
 		}
 	}
+
+	modelxml.InitItems()
 
 }

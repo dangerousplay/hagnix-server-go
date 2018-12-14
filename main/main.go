@@ -1,10 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/binary"
-	"fmt"
 	"github.com/ivahaev/go-logger"
 	"github.com/kataras/iris"
 	"hagnix-server-go1/config"
@@ -21,29 +17,6 @@ func main() {
 	app.Logger().SetLevel("disable")
 
 	logger.Info("Starting ROTMG Server...")
-
-	byts, _ := base64.StdEncoding.DecodeString("AAAAGDQBAAABvgIAAABYAwABqBMEAAAAAAUAAAAABgAAAZsHAAABmwgAAAAXCQAAABcKAAAACwsAAAAADAAAABENAAAAAA4AAAAADwAAAAAQAAAAABEAAAAAEgAAAAATAAAAABQAAAB0FQAAAAAWAAAAABcAAAAAGAAAAAA=")
-
-	buf := bytes.NewBuffer(byts)
-
-	test, _ := buf.ReadByte()
-
-	for {
-		if test < 0 {
-			break
-		}
-
-		var y int32
-		err := binary.Read(buf, binary.BigEndian, &y)
-
-		if err != nil {
-			break
-		}
-
-		fmt.Printf("%d: %d\n", test, y)
-
-		test, _ = buf.ReadByte()
-	}
 
 	config.Init()
 	database.Init()
