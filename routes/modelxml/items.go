@@ -29,11 +29,12 @@ type ObjectXML struct {
 		Stat   string `xml:"stat,attr"`
 		Amount string `xml:"amount,attr"`
 	} `xml:"ActivateOnEquip"`
-	BagType   string `xml:"BagType"`
-	FameBonus string `xml:"FameBonus"`
-	FeedPower string `xml:"feedPower"`
-	Soulbound string `xml:"Soulbound"`
-	DisplayId string `xml:"DisplayId"`
+	BagType    string `xml:"BagType"`
+	FameBonus  string `xml:"FameBonus"`
+	FeedPower  string `xml:"feedPower"`
+	Soulbound  string `xml:"Soulbound"`
+	DisplayId  string `xml:"DisplayId"`
+	UnlockCost int    `xml:"UnlockCost"`
 }
 
 type ItemsXML struct {

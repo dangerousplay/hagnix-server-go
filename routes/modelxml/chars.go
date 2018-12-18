@@ -69,6 +69,7 @@ type ServerItemXML struct {
 
 type CharXML struct {
 	XMLName          xml.Name    `xml:"Char"`
+	Name             string      `xml:"Account>Name,omitempty"`
 	Id               int         `xml:"id,attr"`
 	ObjectType       int         `xml:"ObjectType"`
 	Level            int         `xml:"Level"`

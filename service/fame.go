@@ -429,6 +429,7 @@ func (service *FameService) GetDeathFame(account *models.Accounts, character *mo
 
 	fame.TotalFame = int(bonus)
 	fame.Character = *charXML
+	fame.Character.Name = account.Name
 
 	return fame, nil
 }

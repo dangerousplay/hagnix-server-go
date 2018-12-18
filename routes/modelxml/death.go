@@ -11,7 +11,6 @@ type BonusXML struct {
 
 type DeathXML struct {
 	XMLName   xml.Name `xml:"Fame"`
-	Name      string   `xml:"Account>Name,omitempty"`
 	BaseFame  int      `xml:"BaseFame"`
 	Character CharXML
 	Bonus     []BonusXML

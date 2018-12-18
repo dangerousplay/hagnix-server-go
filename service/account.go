@@ -421,6 +421,18 @@ func (service *AccountService) GetRandomName() string {
 	return randomNames[rands]
 }
 
+func (service *AccountService) VerifyAndGetId(uuid string, password string) (*int64, error) {
+	var account *models.Accounts
+	_, err := database.GetDBEngine().Cols("id").Where("uuid = ? AND password = SHA1(?)", uuid, password).Get(account)
+
+	if account != nil {
+		return &account.Id, err
+	} else {
+		var id int64 = 0
+		return &id, err
+	}
+}
+
 func toCharXML(accountId int64, chars ...models.Characters) []modelxml.CharXML {
 	var charsXML []modelxml.CharXML
 
