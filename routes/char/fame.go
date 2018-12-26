@@ -31,8 +31,6 @@ func handleFame(ctx iris.Context) {
 		return
 	}
 
-	//TODO implement Fame
-
 	acxml, acc, err := service.GetAccountService().VerifyGenerateAccountXMLbyId(accountId)
 
 	if utils.DefaultErrorHandler(ctx, err) {

@@ -15,7 +15,6 @@ func handlePurchase(ctx iris.Context) {
 	password := ctx.PostValue("password")
 	class := ctx.PostValue("classType")
 
-	//TODO implement ClassTypeID from list of IDs
 	if len(guid) < 1 || len(password) < 1 || len(class) < 1 {
 		ctx.XML(messages.BadRequest)
 		return
