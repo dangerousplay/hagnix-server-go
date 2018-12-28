@@ -11,16 +11,22 @@ import (
 	"path/filepath"
 )
 
+var dir string
+
 func RegisterRoutes(app *iris.Application) {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+
+	direct, err := filepath.Abs(filepath.Dir(os.Args[0]))
 
 	if err != nil {
 		panic(err)
 	}
 
+	dir = direct
+
 	app.Get("/crossdomain.xml", handleCrossDomain)
 	app.Get("/fame/list", handleFameList)
 	app.Get("/health", handleHealth)
+	app.Post("/picture/get", handleGetPicture)
 	account.RegisterAccountRoutes(app)
 	appn.RegisterRouters(app)
 	char.RegisterRoutes(app)
